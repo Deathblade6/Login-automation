@@ -1,22 +1,32 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Tue Aug  7 18:51:33 2018
-
-@author: Acer
-"""
-import time
+#you  must have the chroome driver in your PATH.
 from selenium import webdriver
-import random
-def main():
-    driver=webdriver.Chrome('C:\\Users\\Acer\\Downloads\\chromedriver_win32\\chromedriver')
-    driver.get("http://soe.cusat.ac.in/moodle/login/index.php")
-    name = driver.find_element_by_id("username")
-    password = driver.find_element_by_id("password")
-    login = driver.find_element_by_id("loginbtn")
-    name.send_keys("12180021") #Just change the value inside "" with whatever you're username is 
-    password.send_keys("Qwerty1$") #Just change the value inside "" with whatever you're password is 
-    login.click()
-#    time.sleep(random.randint(5,10)*1)
-#    driver.close()
-#    quit()
-main()
+import pickle
+import sys
+
+
+driver=webdriver.Chrome()
+driver.get("http://soe.cusat.ac.in/moodle/login/index.php")
+usr_name_field = driver.find_element_by_id("username")
+password_field = driver.find_element_by_id("password")
+login_btn = driver.find_element_by_id("loginbtn")
+usr_name_field.send_keys("_insert_your_username")#Just change the value inside "" with whatever you're username is 
+password_field.send_keys("_insert_your_password")#Just change the value inside "" with whatever you're password is 
+login_btn.click()
+
+driver.get("http://soe.cusat.ac.in/moodle/course/view.php?id=6")
+latest_update = driver.find_element_by_id("section-0")
+htmlString = latest_update.get_attribute('innerHTML')
+
+try: 
+    file = pickle.load( open( 'source.p', 'rb'))
+    if file == htmlString:
+        print("Values haven't changed!")
+        sys.exit(0)
+    else:
+        pickle.dump( htmlString, open( 'source.p', "wb" ) )  
+        print('Saving')
+except IOError: 
+    pickle.dump( htmlString, open( 'source.p', "wb" ) )
+    print('Created new file.')
+
+
